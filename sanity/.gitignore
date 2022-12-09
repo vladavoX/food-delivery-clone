@@ -24,3 +24,7 @@
 
 # Typescript
 *.tsbuildinfo
+
+# Custom
+.cli
+.config
