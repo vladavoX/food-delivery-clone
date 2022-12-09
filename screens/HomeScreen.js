@@ -57,7 +57,7 @@ const HomeScreen = () => {
         <AdjustmentsVerticalIcon color='#00CCBB' />
       </View>
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <Categories />
       </ScrollView>
     </SafeAreaView>
