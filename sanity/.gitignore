@@ -26,5 +26,5 @@
 *.tsbuildinfo
 
 # Custom
-.cli
-.config
+sanity.cli.js
+sanity.config.js
