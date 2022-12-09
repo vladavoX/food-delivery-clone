@@ -1,6 +1,6 @@
 import { Text, View, Image, TextInput, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/core'
 import {
   UserIcon,
@@ -11,14 +11,34 @@ import {
 
 import Categories from '../components/Categories'
 import FeaturedRow from '../components/FeaturedRow'
+import sanityClient from '../setupSanity.js'
 
 const HomeScreen = () => {
   const navigation = useNavigation()
+  const [featuredCategory, setFeaturedCategory] = useState([])
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     })
+  }, [])
+
+  useEffect(() => {
+    sanityClient
+      .fetch(
+        `
+        *[_type == "featured"] {
+          ...,
+          restaurants[]->{
+            ...,
+            dishes[]->
+          }
+        }
+      `
+      )
+      .then((data) => {
+        setFeaturedCategory(data)
+      })
   }, [])
 
   return (
@@ -66,23 +86,14 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <Categories />
 
-        <FeaturedRow
-          id={1}
-          title='Featured'
-          description='Paid placements for our partners'
-        />
-
-        <FeaturedRow
-          id={2}
-          title='Featured'
-          description='Paid placements for our partners'
-        />
-
-        <FeaturedRow
-          id={3}
-          title='Featured'
-          description='Paid placements for our partners'
-        />
+        {featuredCategory?.map((category) => (
+          <FeaturedRow
+            key={category._id}
+            id={category._id}
+            title={category.name}
+            description={category.short_description}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   )
